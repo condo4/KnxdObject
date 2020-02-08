@@ -30,9 +30,10 @@ void KnxdConnection::__send(unsigned char cmd, uint16_t gad, uint16_t dpt, doubl
     }
 }
 
-KnxdConnection::KnxdConnection(eibaddr_t addr, std::string knxd_url)
-    : m_individualAddress(addr)
-    , m_url(knxd_url)
+KnxdConnection::KnxdConnection(const std::string &id)
+    : m_conf(id)
+    , m_individualAddress(strToPhy(m_conf["physical_address"]))
+    , m_url(m_conf["knxd_url"])
 {
 
 }
@@ -42,7 +43,7 @@ KnxdConnection::~KnxdConnection()
     EIBClose(m_knxd);
 }
 
-bool KnxdConnection::connect()
+bool KnxdConnection::knxConnect()
 {
     m_knxd =  EIBSocketURL(m_url.c_str());
     if(!m_knxd)
@@ -63,7 +64,7 @@ bool KnxdConnection::connect()
 }
 
 
-void KnxdConnection::process()
+void KnxdConnection::knxProcess()
 {
     unsigned char buffer[1025];  //data buffer of 1K
     eibaddr_t dest;
@@ -84,7 +85,7 @@ void KnxdConnection::process()
 
     if(std::find(m_gads.begin(), m_gads.end(), dest) != m_gads.end())
     {
-        if(m_call) m_call(src, dest, buffer);
+        rx(src, dest, buffer);
     }
 }
 
@@ -94,11 +95,6 @@ void KnxdConnection::subscribe(uint16_t gad)
     {
         m_gads.push_back(gad);
     }
-}
-
-void KnxdConnection::registerCallback(gadCallback call)
-{
-    m_call = call;
 }
 
 void KnxdConnection::keepalive()

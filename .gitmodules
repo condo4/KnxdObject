@@ -1,0 +1,3 @@
+[submodule "UnixConfig"]
+	path = UnixConfig
+	url = git@github.com:condo4/UnixConfig.git
