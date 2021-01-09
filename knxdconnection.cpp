@@ -32,10 +32,11 @@ void KnxdConnection::__send(unsigned char cmd, uint16_t gad, uint16_t dpt, doubl
     }
 }
 
-KnxdConnection::KnxdConnection(const std::string &id)
+KnxdConnection::KnxdConnection(const std::string &id, bool dmz)
     : m_conf(id)
     , m_individualAddress(strToPhy(m_conf["physical_address"]))
     , m_url(m_conf["knxd_url"])
+    , m_dmz(dmz)
 {
 
 }
@@ -85,7 +86,7 @@ void KnxdConnection::knxProcess()
         return;
     }
 
-    if(std::find(m_gads.begin(), m_gads.end(), dest) != m_gads.end())
+    if(m_dmz || std::find(m_gads.begin(), m_gads.end(), dest) != m_gads.end())
     {
         rx(src, dest, buffer);
     }

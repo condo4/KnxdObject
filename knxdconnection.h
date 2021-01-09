@@ -18,11 +18,12 @@ private:
     eibaddr_t m_individualAddress {0};
     std::string m_url;
     std::vector<uint16_t> m_gads;
+    bool m_dmz {false};
 
     void __send(unsigned char cmd, uint16_t gad, uint16_t dpt, double val);
 
 public:
-    explicit KnxdConnection(const std::string &id);
+    explicit KnxdConnection(const std::string &id, bool dmz = false);
     virtual ~KnxdConnection();
     bool knxConnect();
     void subscribe(uint16_t gad);
