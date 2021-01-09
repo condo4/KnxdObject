@@ -2,24 +2,24 @@
 #define DPT_H
 #include <string.h>
 
-inline void decode_dpt1(const unsigned char *data, bool *value) {
-    *value = data[0] & 0x1;
+inline void payload_to_dpt1(const unsigned char *data, bool *value) {
+    *value = data[1] & 0x1;
 }
 
-inline void encode_dpt1(unsigned char *data, bool value) {
-    data[0] &= 0xFE;
-    if(value) data[0] |= 0x1;
+inline void dpt1_to_payload(unsigned char *data, bool value) {
+    data[1] &= 0xFE;
+    if(value) data[1] |= 0x1;
 }
 
-inline void decode_dpt2(const unsigned char *data, bool *control, bool *value) {
-    *value = data[0] & 0x1;
-    *control = data[0] & 0x2;
+inline void payload_to_dpt2(const unsigned char *data, bool *control, bool *value) {
+    *value = data[1] & 0x1;
+    *control = data[1] & 0x2;
 }
 
-inline void encode_dpt2(unsigned char *data, bool control, bool value) {
-    data[0] &= 0xFC;
-    if(value) data[0] |= 0x1;
-    if(control) data[0] |= 0x2;
+inline void dpt2_to_payload(unsigned char *data, bool control, bool value) {
+    data[1] &= 0xFC;
+    if(value) data[1] |= 0x1;
+    if(control) data[1] |= 0x2;
 }
 
 inline void decode_dpt3(const unsigned char *data, bool *control, unsigned char *stepcode) {
@@ -139,30 +139,30 @@ inline void encode_dpt12(unsigned char *data, unsigned int value) {
     data[4] = (value >>  0) & 0xFF;
 }
 
-inline void decode_dpt13(const unsigned char *data, signed int *value) {
-    *value = data[1] << 24 | data[2] << 16 | data[3] << 8 | data[4];
+inline void payload_to_dpt13(const unsigned char *data, signed int *value) {
+    *value = data[2] << 24 | data[3] << 16 | data[4] << 8 | data[5];
 }
 
-inline void encode_dpt13(unsigned char *data, signed int value) {
-    data[1] = (value >> 24) & 0xFF;
-    data[2] = (value >> 16) & 0xFF;
-    data[3] = (value >>  8) & 0xFF;
-    data[4] = (value >>  0) & 0xFF;
+inline void dpt13_to_payload(unsigned char *data, signed int value) {
+    data[2] = (value >> 24) & 0xFF;
+    data[3] = (value >> 16) & 0xFF;
+    data[4] = (value >>  8) & 0xFF;
+    data[5] = (value >>  0) & 0xFF;
 }
 
-inline void decode_dpt14(const unsigned char *data, float *value) {
-    unsigned int rdata = static_cast<unsigned int>((data[1]<< 24) | (data[2]<< 16) | (data[3]<< 8) | data[4]);
+inline void payload_to_dpt14(const unsigned char *data, float *value) {
+    unsigned int rdata = static_cast<unsigned int>((data[2]<< 24) | (data[3]<< 16) | (data[4]<< 8) | data[5]);
     memcpy(value, &rdata, sizeof data);
 }
 
-inline void encode_dpt14(unsigned char *data, float value) {
+inline void dpt14_to_paylaod(unsigned char *data, float value) {
     unsigned int rdata;
     memcpy(&rdata, &value, sizeof(rdata));
 
-    data[1] = (rdata >> 24) & 0xFF;
-    data[2] = (rdata >> 16) & 0xFF;
-    data[3] = (rdata >>  8) & 0xFF;
-    data[4] = (rdata >>  0) & 0xFF;
+    data[2] = (rdata >> 24) & 0xFF;
+    data[3] = (rdata >> 16) & 0xFF;
+    data[4] = (rdata >>  8) & 0xFF;
+    data[5] = (rdata >>  0) & 0xFF;
 }
 
 inline void decode_dpt225(const unsigned char *data, unsigned short *time_period, unsigned char *percent) {
