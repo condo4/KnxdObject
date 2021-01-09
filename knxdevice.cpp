@@ -164,7 +164,9 @@ void KnxDevice::exec()
         current = std::time(nullptr);
         if((current - last_time) > polling || activity == 0)
         {
+#ifdef DEBUG
             std::cout << "POLL:" << std::asctime(std::localtime(&current));
+#endif
             last_time = current;
 
             keepalive();
