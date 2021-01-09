@@ -10,7 +10,9 @@ void KnxdConnection::__send(unsigned char cmd, uint16_t gad, uint16_t dpt, doubl
     /* WRITE */
     message[0] = 00;
     message[1] = cmd;
-    std::cerr << "Need to write " << gadToStr(gad) << " (" << dptToStr(dpt) << "): " << val << std::endl;
+#ifdef DEBUG
+    std::cout << "Need to write " << gadToStr(gad) << " (" << dptToStr(dpt) << "): " << val << std::endl;
+#endif
 
     switch(dpt) {
     case DPT(9,1):
