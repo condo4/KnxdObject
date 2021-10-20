@@ -77,7 +77,8 @@ void KnxdConnection::knxProcess()
     if(len < 0)
     {
         std::cerr << "Read EIBGetGroup_Src failed (" << len << ") reconnect" << std::endl;
-        keepalive();
+        EIBClose_sync(m_knxd);
+        knxConnect();
         return;
     }
     if(len < 2)
