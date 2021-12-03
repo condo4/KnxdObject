@@ -69,6 +69,7 @@ bool KnxdConnection::knxConnect()
 
 void KnxdConnection::knxProcess()
 {
+    static int error = 0;
     unsigned char buffer[1025];  //data buffer of 1K
     eibaddr_t dest;
     eibaddr_t src;
@@ -78,7 +79,11 @@ void KnxdConnection::knxProcess()
     {
         std::cerr << "Read EIBGetGroup_Src failed (" << len << ") reconnect" << std::endl;
         EIBClose_sync(m_knxd);
-        knxConnect();
+        ++error;
+        if(error < 5)
+            knxConnect();
+        else
+            exit(-1);
         return;
     }
     if(len < 2)
