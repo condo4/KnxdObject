@@ -15,6 +15,7 @@ class KnxDevice: public KnxdConnection
     std::string m_hostname;
     unsigned short m_port {0};
     bool m_running {true};
+    bool m_dmz {false};
 
 public:
     KnxDevice(const std::string &id);

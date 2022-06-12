@@ -26,15 +26,26 @@ KnxDevice::KnxDevice(const std::string &id)
         }
     }
     std::string url = m_conf["device_url"];
-    size_t sep = url.find(":");
-    m_hostname = url.substr(0, sep);
-    m_port = static_cast<unsigned short>(std::stoul((url.substr(sep + 1))));
+    if(url.size())
+    {
+        size_t sep = url.find(":");
+        m_hostname = url.substr(0, sep);
+        m_port = static_cast<unsigned short>(std::stoul((url.substr(sep + 1))));
+    }
+    if(m_conf["dmz"].size())
+    {
+        if(m_conf["dmz"] == "1")
+        {
+            setDmz(true);
+        }
+    }
 }
 
 
 void KnxDevice::rx(uint16_t src, uint16_t gad, unsigned char *payload)
 {
     bool needtoproccess = false;
+#ifdef DEBUG
     switch(getCmd(payload))
     {
 
@@ -50,6 +61,7 @@ void KnxDevice::rx(uint16_t src, uint16_t gad, unsigned char *payload)
         break;
     }
     std::cout << phyToStr(src) << "->" << gadToStr(gad) << std::endl;
+#endif
 
     uint16_t dpt = m_gadDpt[gad];
 
@@ -73,6 +85,11 @@ void KnxDevice::rx(uint16_t src, uint16_t gad, unsigned char *payload)
             m_time = 0; // Reset cache
             m_gadVal[gad] = sendToDevice(gad, payload);
         }
+        else if(dmz())
+        {
+            sendToDevice(gad, payload);
+        }
+
         break;
     }
     default:

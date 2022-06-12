@@ -34,6 +34,8 @@ public:
 
     void knxProcess();
     virtual void rx(uint16_t src, uint16_t dest, unsigned char *payload) = 0;
+    void setDmz(bool newDmz);
+    bool dmz() const;
 };
 
 #endif // KNXDCONNECTION_H

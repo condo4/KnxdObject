@@ -4,6 +4,16 @@
 #include "utils.h"
 #include "dpt.h"
 
+void KnxdConnection::setDmz(bool newDmz)
+{
+    m_dmz = newDmz;
+}
+
+bool KnxdConnection::dmz() const
+{
+    return m_dmz;
+}
+
 void KnxdConnection::__send(unsigned char cmd, uint16_t gad, uint16_t dpt, double val)
 {
     unsigned char message[11] = {0x00, 0x80, 0x0c, 0x65};
