@@ -28,6 +28,7 @@ public:
     unsigned short getPort() const;
     void exec();
     std::time_t getTime() const;
+    void setTime(std::time_t time);
 
     virtual double getFromDevice(std::string param) = 0;
     virtual double sendToDevice(uint16_t gad, unsigned char *payload) = 0;

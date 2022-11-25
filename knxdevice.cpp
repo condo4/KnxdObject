@@ -2,12 +2,18 @@
 #include "utils.h"
 #include "dpt.h"
 #include <iostream>
+#include <exception>
 #include <systemd/sd-daemon.h>
 
 
 std::time_t KnxDevice::getTime() const
 {
     return m_time;
+}
+
+void KnxDevice::setTime(std::time_t time)
+{
+    m_time = time;
 }
 
 KnxDevice::KnxDevice(const std::string &id)
@@ -121,12 +127,24 @@ void KnxDevice::process()
         uint16_t gad = x.first;
         if(m_gadFlags[gad] == "CRT")
         {
-            double val = getFromDevice(x.second);
-            if(m_gadVal.count(gad) == 0) m_gadVal[gad] = 0;
-            if(std::abs(m_gadVal[gad] - val) > 0.1)
+            int ret = false;
+            int retry = 5;
+            while(!ret && retry-- > 0)
             {
-                m_gadVal[gad] = val;
-                write(gad, m_gadDpt[gad], val);
+                try {
+                    double val = getFromDevice(x.second);
+                    if(m_gadVal.count(gad) == 0) m_gadVal[gad] = 0;
+                    if(std::abs(m_gadVal[gad] - val) > 0.1)
+                    {
+                        m_gadVal[gad] = val;
+                        write(gad, m_gadDpt[gad], val);
+                    }
+                    ret = true;
+                }
+                catch(const std::exception &e)
+                {
+                    std::cerr << "ERROR: " << e.what() <<  std::endl;
+                }
             }
         }
     }
